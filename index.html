@@ -8,6 +8,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <style>
       :root {
         /* Default Theme (Dark) */
@@ -999,9 +1001,9 @@
         <!-- Controls Section -->
         <aside class="controls-section">
           <!-- Model Loading -->
-          <div class="model-loading" id="modelLoading" style="display: none">
+          <div class="model-loading" id="modelLoading">
             <div class="loading-header">
-              <div class="form-label">Loading Models</div>
+              <div class="form-label">Loading FaceAPI Models</div>
               <div class="small" id="modelProgressText">0%</div>
             </div>
             <div class="progress-bar">
@@ -1465,6 +1467,7 @@
           loadSaved();
           refreshPeopleList();
           updateStats();
+          loadFaceAPIModels();
           showAlert("AR Face Recognition Studio ready", "info", "System Ready");
         }
 
@@ -1583,13 +1586,23 @@
               "Processing"
             );
 
-            // Simulate processing delay
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            // Use FaceAPI to process images
+            const descriptors = [];
+            for (const file of files) {
+              const img = await faceapi.bufferToImage(file);
+              const detection = await faceapi
+                .detectSingleFace(img)
+                .withFaceLandmarks()
+                .withFaceDescriptor();
 
-            // For demo purposes, we'll create a mock descriptor
-            const descriptors = [
-              new Float32Array(128).map(() => Math.random()),
-            ];
+              if (detection) {
+                descriptors.push(detection.descriptor);
+              }
+            }
+
+            if (descriptors.length === 0) {
+              throw new Error("No faces detected in the provided images");
+            }
 
             // Update or add person
             const wasUpdate = labeledDescriptors.some(
@@ -1624,12 +1637,13 @@
 
             persistSaved();
             refreshPeopleList();
+            recreateFaceMatcher();
 
             const successMessage = wasUpdate
-              ? `Updated ${name} with face descriptors${
+              ? `Updated ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
                 }`
-              : `Added ${name} with face descriptors${
+              : `Added ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
                 }`;
 
@@ -1664,7 +1678,6 @@
             '<i class="fas fa-spinner fa-spin"></i> Starting...';
 
           try {
-            await loadModels();
             await startCamera();
 
             if (labeledDescriptors.length === 0) {
@@ -1681,7 +1694,6 @@
               );
             }
 
-            recreateFaceMatcher();
             state.running = true;
             elements.stopBtn.style.display = "inline-block";
             elements.startBtn.style.display = "none";
@@ -1752,60 +1764,70 @@
               elements.overlay.height
             );
 
-            // Simulate face detection with random results for demo
-            const faceCount =
-              Math.random() > 0.3 ? Math.floor(Math.random() * 3) + 1 : 0;
+            // Use FaceAPI for face detection
+            const detections = await faceapi
+              .detectAllFaces(
+                elements.videoElement,
+                new faceapi.TinyFaceDetectorOptions()
+              )
+              .withFaceLandmarks()
+              .withFaceDescriptors();
 
-            if (faceCount === 0) {
+            if (detections.length === 0) {
               elements.recognitionStatus.textContent = "No faces";
               elements.facesCount.textContent = "0";
               elements.bestMatch.textContent = "None";
               hidePersonVideo();
             } else {
-              // Draw simulated face detections
+              // Draw face detections
               let recognizedPerson = null;
               let mainFacePosition = null;
               let mainFaceSize = null;
 
-              for (let i = 0; i < faceCount; i++) {
-                const width = 100 + Math.random() * 100;
-                const height = 120 + Math.random() * 80;
-                const x = Math.random() * (elements.overlay.width - width);
-                const y = Math.random() * (elements.overlay.height - height);
+              const faceMatcher = new faceapi.FaceMatcher(
+                labeledDescriptors.map(
+                  (ld) =>
+                    new faceapi.LabeledFaceDescriptors(ld.label, ld.descriptors)
+                ),
+                parseFloat(elements.threshold.value)
+              );
+
+              for (let i = 0; i < detections.length; i++) {
+                const detection = detections[i];
+                const box = detection.detection.box;
+                const result = faceMatcher.findBestMatch(detection.descriptor);
+
+                // Draw face box
+                ctx.strokeStyle = "#00e0a7";
+                ctx.lineWidth = 3;
+                ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+                // Draw recognition result
+                ctx.fillStyle = "#00e0a7";
+                ctx.font = "16px Arial";
+                ctx.fillText(result.toString(), box.x, box.y - 5);
 
                 // Store position of the main face for stabilization
                 if (i === 0) {
-                  mainFacePosition = { x: x + width / 2, y: y + height / 2 };
-                  mainFaceSize = Math.max(width, height);
+                  mainFacePosition = {
+                    x: box.x + box.width / 2,
+                    y: box.y + box.height / 2,
+                  };
+                  mainFaceSize = Math.max(box.width, box.height);
                 }
 
-                ctx.strokeStyle = "#00e0a7";
-                ctx.lineWidth = 3;
-                ctx.strokeRect(x, y, width, height);
+                // If this is the first face and it's recognized, set it as best match
+                if (i === 0 && !result.label.includes("unknown")) {
+                  recognizedPerson = result;
+                  elements.bestMatch.textContent = result.label;
 
-                // In a real implementation, we would recognize the face here
-                if (labeledDescriptors.length > 0 && Math.random() > 0.4) {
-                  const randomPerson =
-                    labeledDescriptors[
-                      Math.floor(Math.random() * labeledDescriptors.length)
-                    ];
-                  ctx.fillStyle = "#00e0a7";
-                  ctx.font = "16px Arial";
-                  ctx.fillText(randomPerson.label, x, y - 5);
-
-                  // If this is the first face, set it as the best match
-                  if (i === 0) {
-                    recognizedPerson = randomPerson;
-                    elements.bestMatch.textContent = randomPerson.label;
-
-                    // Update stats
-                    state.stats.matchesToday++;
-                  }
+                  // Update stats
+                  state.stats.matchesToday++;
                 }
               }
 
               elements.recognitionStatus.textContent = "Recognizing";
-              elements.facesCount.textContent = faceCount.toString();
+              elements.facesCount.textContent = detections.length.toString();
 
               // Update stabilizer with face position
               if (mainFacePosition && state.stabilizer.enabled) {
@@ -1818,7 +1840,7 @@
               // Handle single face mode
               if (
                 state.singleFaceMode === "auto" &&
-                faceCount === 1 &&
+                detections.length === 1 &&
                 recognizedPerson
               ) {
                 // Only play video if this face hasn't been recognized before in this session
@@ -1852,7 +1874,7 @@
               } else {
                 hidePersonVideo();
                 if (
-                  faceCount > 0 &&
+                  detections.length > 0 &&
                   elements.bestMatch.textContent === "None"
                 ) {
                   elements.bestMatch.textContent = "Unknown";
@@ -1860,7 +1882,7 @@
               }
 
               // Update stats
-              state.stats.totalFaces += faceCount;
+              state.stats.totalFaces += detections.length;
               state.stats.recognitionTime = Math.floor(
                 performance.now() - recognitionStartTime
               );
@@ -1989,40 +2011,55 @@
           }
         }
 
-        async function loadModels() {
+        async function loadFaceAPIModels() {
           if (state.modelsLoaded) return;
 
           elements.modelLoading.style.display = "block";
 
-          // Simulate model loading for demo
-          const totalSteps = 5;
-          for (let i = 1; i <= totalSteps; i++) {
-            const progress = (i / totalSteps) * 100;
-            elements.modelProgressBar.style.width = `${progress}%`;
-            elements.modelProgressText.textContent = `${Math.round(progress)}%`;
+          try {
+            // Update loading status
+            elements.modelStatus.textContent =
+              "Loading face detection model...";
+            elements.modelProgressBar.style.width = "20%";
+            elements.modelProgressText.textContent = "20%";
 
-            const steps = [
-              "Loading TensorFlow.js",
-              "Loading Face Detection Model",
-              "Loading Face Landmark Model",
-              "Loading Face Recognition Model",
-              "Initializing Models",
-            ];
+            await faceapi.nets.tinyFaceDetector.loadFromUri("./models");
 
-            elements.modelStatus.textContent = steps[i - 1];
+            elements.modelStatus.textContent = "Loading face landmark model...";
+            elements.modelProgressBar.style.width = "40%";
+            elements.modelProgressText.textContent = "40%";
 
-            // Simulate loading time
-            await new Promise((resolve) => setTimeout(resolve, 600));
+            await faceapi.nets.faceLandmark68Tiny.loadFromUri("./models");
+
+            elements.modelStatus.textContent =
+              "Loading face recognition model...";
+            elements.modelProgressBar.style.width = "60%";
+            elements.modelProgressText.textContent = "60%";
+
+            await faceapi.nets.faceRecognitionNet.loadFromUri("./models");
+
+            elements.modelStatus.textContent = "Initializing models...";
+            elements.modelProgressBar.style.width = "100%";
+            elements.modelProgressText.textContent = "100%";
+
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            elements.modelLoading.style.display = "none";
+            state.modelsLoaded = true;
+
+            showAlert(
+              "All FaceAPI models loaded successfully",
+              "success",
+              "Models Ready"
+            );
+          } catch (error) {
+            console.error("Error loading FaceAPI models:", error);
+            showAlert(
+              "Error loading FaceAPI models. Please check if models are available in the ./models directory.",
+              "error",
+              "Model Loading Error"
+            );
           }
-
-          elements.modelLoading.style.display = "none";
-          state.modelsLoaded = true;
-
-          showAlert(
-            "All models loaded successfully",
-            "success",
-            "Models Ready"
-          );
         }
 
         function recreateFaceMatcher() {
