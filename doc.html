@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Face Recognition Video Player - Documentation</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        background: #ffffff;
+        color: #1e293b;
+        line-height: 1.6;
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid #3b82f6;
+      }
+
+      .logo {
+        font-size: 42px;
+        font-weight: 700;
+        color: #3b82f6;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 20px;
+        color: #64748b;
+        font-weight: 400;
+      }
+
+      h1 {
+        color: #1e293b;
+        margin: 40px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+        font-weight: 600;
+      }
+
+      h2 {
+        color: #334155;
+        margin: 30px 0 15px 0;
+        font-weight: 600;
+      }
+
+      h3 {
+        color: #475569;
+        margin: 25px 0 12px 0;
+        font-weight: 500;
+      }
+
+      p {
+        margin-bottom: 16px;
+        color: #475569;
+      }
+
+      ul,
+      ol {
+        margin: 16px 0;
+        padding-left: 30px;
+      }
+
+      li {
+        margin-bottom: 8px;
+        color: #475569;
+      }
+
+      .code-block {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        border-left: 4px solid #3b82f6;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+      }
+
+      .feature-card {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
+      }
+
+      .note {
+        background: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: #f0fdf4;
+        border-left: 4px solid #10b981;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background: #f1f5f9;
+        font-weight: 600;
+        color: #334155;
+      }
+
+      .toc {
+        background: #f8fafc;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 30px 0;
+      }
+
+      .toc ul {
+        columns: 2;
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .toc li {
+        margin-bottom: 8px;
+      }
+
+      .toc a {
+        color: #3b82f6;
+        text-decoration: none;
+      }
+
+      .toc a:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 2px solid #e2e8f0;
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      @media print {
+        body {
+          padding: 20px;
+        }
+        .no-print {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">AR Face Recognition Video Player</div>
+      <div class="subtitle">Complete Documentation & User Guide</div>
+      <div style="margin-top: 20px; color: #64748b; font-size: 14px">
+        Version 1.0 | Last Updated: 2024
+      </div>
+    </div>
+
+    <div class="toc">
+      <h2>📋 Table of Contents</h2>
+      <ul>
+        <li><a href="#overview">1. Overview</a></li>
+        <li><a href="#features">2. Features</a></li>
+        <li><a href="#architecture">3. Architecture</a></li>
+        <li><a href="#installation">4. Installation & Setup</a></li>
+        <li><a href="#usage">5. Usage Guide</a></li>
+        <li><a href="#api">6. API Reference</a></li>
+        <li><a href="#customization">7. Customization</a></li>
+        <li><a href="#troubleshooting">8. Troubleshooting</a></li>
+        <li><a href="#compatibility">9. Browser Compatibility</a></li>
+      </ul>
+    </div>
+
+    <h1 id="overview">🎯 Overview</h1>
+    <p>
+      The <strong>AR Face Recognition Video Player</strong> is a web-based
+      application that provides real-time face detection and recognition
+      capabilities with integrated video playback. When a recognized face is
+      detected, the system plays a personalized video associated with that
+      individual.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Real-time Detection</h3>
+        <p>Live face detection using device camera with immediate response</p>
+      </div>
+      <div class="feature-card">
+        <h3>Personalized Content</h3>
+        <p>Unique video playback for each recognized individual</p>
+      </div>
+      <div class="feature-card">
+        <h3>Multi-Theme Support</h3>
+        <p>Multiple color schemes with seamless switching</p>
+      </div>
+    </div>
+
+    <h2>Key Capabilities</h2>
+    <ul>
+      <li><strong>Real-time face detection</strong> using device camera</li>
+      <li>
+        <strong>Custom face training</strong> with multiple images per person
+      </li>
+      <li>
+        <strong>Personalized video playback</strong> triggered by recognition
+      </li>
+      <li>
+        <strong>Advanced video stabilization</strong> for smooth overlay display
+      </li>
+      <li><strong>Multi-theme responsive interface</strong></li>
+    </ul>
+
+    <h1 id="features">✨ Features</h1>
+
+    <h2>Core Features</h2>
+    <ul>
+      <li>
+        🎭 <strong>Face Recognition</strong>: Detect and identify known faces in
+        real-time
+      </li>
+      <li>
+        🎥 <strong>Video Integration</strong>: Play personalized videos for
+        recognized individuals
+      </li>
+      <li>
+        🎨 <strong>Theme System</strong>: Multiple color schemes (Dark, Light,
+        Purple, Green)
+      </li>
+      <li>
+        📱 <strong>Responsive Design</strong>: Works on desktop, tablet, and
+        mobile devices
+      </li>
+      <li>
+        💾 <strong>Data Persistence</strong>: Save trained faces and settings
+        between sessions
+      </li>
+      <li>
+        🎯 <strong>Video Stabilization</strong>: Smooth, stabilized video
+        overlay
+      </li>
+    </ul>
+
+    <h2>Advanced Features</h2>
+    <ul>
+      <li>
+        <strong>Configurable Recognition Threshold</strong>: Adjust matching
+        sensitivity
+      </li>
+      <li>
+        <strong>Scan Duration Settings</strong>: Customize confirmation time
+        (5-10 seconds)
+      </li>
+      <li>
+        <strong>Progress Tracking</strong>: Visual feedback during face scanning
+      </li>
+      <li><strong>Alert System</strong>: Comprehensive user notifications</li>
+      <li>
+        <strong>File Management</strong>: Upload images and videos directly
+      </li>
+    </ul>
+
+    <h1 id="architecture">🏗️ Architecture</h1>
+
+    <h2>Technology Stack</h2>
+    <ul>
+      <li><strong>Frontend</strong>: HTML5, CSS3, JavaScript (ES6+)</li>
+      <li>
+        <strong>Styling</strong>: CSS Custom Properties (Variables), Flexbox,
+        Grid
+      </li>
+      <li><strong>Media</strong>: WebRTC for camera access, HTML5 Video API</li>
+      <li><strong>Storage</strong>: localStorage for data persistence</li>
+      <li><strong>Icons</strong>: Font Awesome 6.4.0</li>
+    </ul>
+
+    <h2>File Structure</h2>
+    <div class="code-block">
+      ar-face-recognition/ ├── index.html # Main application file ├── (embedded
+      styles) # All CSS in &lt;style&gt; section └── (embedded scripts) # All
+      JavaScript in &lt;script&gt; section
+    </div>
+
+    <h2>Component Architecture</h2>
+    <div class="code-block">
+      App Container ├── Header │ ├── Logo & Title │ └── Theme Controls ├── Main
+      Content │ ├── Video Section │ │ ├── Camera Feed │ │ ├── Face Detection
+      Overlay │ │ ├── Video Overlay (Stabilized) │ │ ├── Recognition Info │ │
+      └── Statistics Grid │ └── Controls Section │ ├── Model Loading │ ├── Add
+      Person Form │ ├── Known People List │ ├── Video Stabilization │ └──
+      Recognition Settings ├── Welcome Popup └── Alert System
+    </div>
+
+    <h1 id="installation">🚀 Installation & Setup</h1>
+
+    <h2>Prerequisites</h2>
+    <ul>
+      <li>Modern web browser with camera access</li>
+      <li>HTTPS connection (for camera access)</li>
+      <li>JavaScript enabled</li>
+    </ul>
+
+    <h2>Quick Start</h2>
+    <ol>
+      <li><strong>Download the HTML file</strong></li>
+      <li>
+        <strong>Open in browser</strong>:
+        <div class="code-block">
+          # Simple method - double click the HTML file # Or use local server for
+          better performance: python -m http.server 8000 # Then visit:
+          http://localhost:8000
+        </div>
+      </li>
+      <li><strong>Grant camera permissions</strong> when prompted</li>
+    </ol>
+
+    <div class="note">
+      <strong>Note:</strong> For best performance, use a local server instead of
+      opening the HTML file directly.
+    </div>
+
+    <h2>Deployment Options</h2>
+    <table>
+      <tr>
+        <th>Environment</th>
+        <th>Method</th>
+        <th>Best For</th>
+      </tr>
+      <tr>
+        <td><strong>Local</strong></td>
+        <td>Open directly in browser</td>
+        <td>Quick testing</td>
+      </tr>
+      <tr>
+        <td><strong>Development</strong></td>
+        <td>Use live-server or http-server</td>
+        <td>Development & testing</td>
+      </tr>
+      <tr>
+        <td><strong>Production</strong></td>
+        <td>Host on web server (Apache, Nginx)</td>
+        <td>Public deployment</td>
+      </tr>
+    </table>
+
+    <h1 id="usage">📖 Usage Guide</h1>
+
+    <h2>1. Adding People to the System</h2>
+
+    <h3>Step 1: Fill Person Details</h3>
+    <div class="code-block">
+      // Required fields: Person Name: "John Doe" Training Images: 1-5 clear
+      face images Associated Video: Optional video file or URL
+    </div>
+
+    <h3>Step 2: Upload Process</h3>
+    <ol>
+      <li>Enter person's name in "Person Name" field</li>
+      <li>Select 1-5 face images (JPEG, PNG, WebP)</li>
+      <li>
+        Optionally add video:
+        <ul>
+          <li>Upload video file (MP4, WebM) OR</li>
+          <li>Enter video URL</li>
+        </ul>
+      </li>
+      <li>Click "Add Person" button</li>
+    </ol>
+
+    <h3>Step 3: Verification</h3>
+    <ul>
+      <li>Person appears in "Known People" list</li>
+      <li>Face descriptors are generated and stored</li>
+      <li>Video is linked to the person's profile</li>
+    </ul>
+
+    <h2>2. Starting Face Recognition</h2>
+
+    <h3>Initial Setup</h3>
+    <ol>
+      <li><strong>Click "Start Recognition"</strong></li>
+      <li><strong>Grant camera permissions</strong> when prompted</li>
+      <li><strong>Wait for models to load</strong> (simulated in demo)</li>
+      <li><strong>System begins scanning</strong> for faces</li>
+    </ol>
+
+    <h3>Recognition Process</h3>
+    <div class="code-block">
+      Camera Active → Face Detection → Recognition Matching → → Confirmation
+      Period (7 sec) → Welcome Popup → Video Playback
+    </div>
+
+    <h2>3. Using Video Stabilization</h2>
+
+    <h3>Enable Stabilizer</h3>
+    <ol>
+      <li><strong>Toggle "Enable Stabilizer"</strong> button</li>
+      <li>
+        <strong>Adjust settings</strong>:
+        <ul>
+          <li>
+            <strong>Smoothness</strong>: Controls movement smoothing (1-10)
+          </li>
+          <li><strong>Strength</strong>: Stabilization intensity (1-100%)</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Stabilization Behavior</h3>
+    <ul>
+      <li>Smooths video overlay movements</li>
+      <li>Compensates for face position changes</li>
+      <li>Provides professional-looking overlay</li>
+    </ul>
+
+    <h2>4. Configuration Settings</h2>
+
+    <h3>Recognition Threshold</h3>
+    <table>
+      <tr>
+        <th>Setting</th>
+        <th>Description</th>
+        <th>Use Case</th>
+      </tr>
+      <tr>
+        <td><strong>0.4 (Strict)</strong></td>
+        <td>High confidence required</td>
+        <td>High security</td>
+      </tr>
+      <tr>
+        <td><strong>0.5 (Moderate)</strong></td>
+        <td>Balanced accuracy</td>
+        <td>General use</td>
+      </tr>
+      <tr>
+        <td><strong>0.6 (Balanced)</strong></td>
+        <td>Default setting</td>
+        <td>Recommended</td>
+      </tr>
+      <tr>
+        <td><strong>0.7 (Lenient)</strong></td>
+        <td>More permissive matching</td>
+        <td>Quick recognition</td>
+      </tr>
+    </table>
+
+    <h3>Scan Duration</h3>
+    <table>
+      <tr>
+        <th>Duration</th>
+        <th>Confidence Level</th>
+        <th>Use Case</th>
+      </tr>
+      <tr>
+        <td><strong>5 seconds</strong></td>
+        <td>Quick confirmation</td>
+        <td>Fast-paced environments</td>
+      </tr>
+      <tr>
+        <td><strong>7 seconds</strong></td>
+        <td>Default balanced timing</td>
+        <td>General purpose</td>
+      </tr>
+      <tr>
+        <td><strong>10 seconds</strong></td>
+        <td>High confidence requirement</td>
+        <td>High security areas</td>
+      </tr>
+    </table>
+
+    <h1 id="api">🔧 API Reference</h1>
+
+    <h2>Core Classes</h2>
+
+    <h3>VideoStabilizer Class</h3>
+    <div class="code-block">
+      class VideoStabilizer { constructor() enable() // Enable stabilization
+      disable() // Disable stabilization updateTargetPosition(facePosition,
+      faceSize) applyStabilization() resetPosition() updateSettings(smoothness,
+      strength) }
+    </div>
+
+    <h3>Properties</h3>
+    <ul>
+      <li><code>enabled</code>: Boolean - Stabilization active state</li>
+      <li><code>smoothness</code>: Number (1-10) - Movement smoothing</li>
+      <li><code>strength</code>: Number (1-100) - Stabilization intensity</li>
+    </ul>
+
+    <h2>Application State Object</h2>
+    <div class="code-block">
+      const state = { running: boolean, faceMatcher: null, modelsLoaded:
+      boolean, cameraActive: boolean, currentUser: string|null,
+      consecutiveDetections: number, stabilizer: VideoStabilizer, stats: {
+      totalFaces: number, matchesToday: number, recognitionTime: number } };
+    </div>
+
+    <h2>Key Functions</h2>
+
+    <h3>Face Management</h3>
+    <div class="code-block">
+      handleAddPerson() // Add new person to system refreshPeopleList() //
+      Update people list UI removePerson(name) // Delete person from system
+    </div>
+
+    <h3>Recognition Control</h3>
+    <div class="code-block">
+      handleStartRecognition() // Start recognition process
+      handleStopRecognition() // Stop recognition mainLoop() // Main detection
+      loop handleUserDetection(person) // Process recognized face
+    </div>
+
+    <h3>Video Management</h3>
+    <div class="code-block">
+      setPersonVideo(src, name) // Play personalized video showPersonVideo() //
+      Show video overlay hidePersonVideo() // Hide video overlay
+    </div>
+
+    <h2>Event Handlers</h2>
+    <ul>
+      <li><code>themeButtons.click</code>: Change color theme</li>
+      <li><code>addPersonBtn.click</code>: Add new person</li>
+      <li><code>startBtn.click</code>: Start recognition</li>
+      <li><code>stopBtn.click</code>: Stop recognition</li>
+      <li><code>fileInput.change</code>: Handle file uploads</li>
+    </ul>
+
+    <h1 id="customization">🎨 Customization</h1>
+
+    <h2>Theme System</h2>
+
+    <h3>Available Themes</h3>
+    <ol>
+      <li><strong>Dark</strong> (Default): Dark background with blue accent</li>
+      <li><strong>Light</strong>: Light background with blue accent</li>
+      <li><strong>Purple</strong>: Dark background with purple/pink accent</li>
+      <li><strong>Green</strong>: Dark background with green/teal accent</li>
+    </ol>
+
+    <h3>Custom Theme Creation</h3>
+    <div class="code-block">
+      [data-theme="custom"] { --primary: #your-color; --bg-primary:
+      #your-background; --text-primary: #your-text-color; /* Add all CSS
+      variables from existing themes */ }
+    </div>
+
+    <h2>Styling Modifications</h2>
+
+    <h3>Color Variables</h3>
+    <div class="code-block">
+      :root { --primary: #3b82f6; /* Main brand color */ --bg-primary: #0f172a;
+      /* Primary background */ --text-primary: #f1f5f9; /* Primary text color */
+      /* ... plus 20+ other variables */ }
+    </div>
+
+    <h3>Component Styling</h3>
+    <ul>
+      <li>Modify CSS in the <code>&lt;style&gt;</code> section</li>
+      <li>Use existing CSS classes for consistency</li>
+      <li>Maintain responsive breakpoints</li>
+    </ul>
+
+    <h2>Adding New Features</h2>
+
+    <h3>Example: Add Sound Effects</h3>
+    <div class="code-block">
+      function playRecognitionSound() { const audio = new
+      Audio('recognized.mp3'); audio.play(); } // Call in handleUserDetection
+      when recognition is confirmed
+    </div>
+
+    <h1 id="troubleshooting">🔍 Troubleshooting</h1>
+
+    <h2>Common Issues</h2>
+
+    <h3>Camera Access Problems</h3>
+    <p><strong>Symptoms</strong>: Black video element, permission errors</p>
+    <p><strong>Solutions</strong>:</p>
+    <ol>
+      <li>Ensure HTTPS connection</li>
+      <li>Check browser permissions</li>
+      <li>Verify camera isn't used by another application</li>
+      <li>Try different browser</li>
+    </ol>
+
+    <h3>Face Detection Not Working</h3>
+    <p><strong>Symptoms</strong>: No face boxes, "No faces" status</p>
+    <p><strong>Solutions</strong>:</p>
+    <ol>
+      <li>Ensure good lighting</li>
+      <li>Face camera directly</li>
+      <li>Check camera focus</li>
+      <li>Verify person is added to system</li>
+    </ol>
+
+    <h3>Video Playback Issues</h3>
+    <p><strong>Symptoms</strong>: Video doesn't play, error messages</p>
+    <p><strong>Solutions</strong>:</p>
+    <ol>
+      <li>Check video file format (MP4, WebM)</li>
+      <li>Verify video codec compatibility</li>
+      <li>Ensure video files are properly uploaded</li>
+      <li>Check browser autoplay policies</li>
+    </ol>
+
+    <div class="warning">
+      <strong>Warning:</strong> Some browsers block autoplay of videos with
+      sound. Ensure videos are muted or implement user interaction for playback.
+    </div>
+
+    <h2>Performance Optimization</h2>
+
+    <h3>For Better Performance</h3>
+    <ol>
+      <li><strong>Use fewer training images</strong> (1-3 high quality)</li>
+      <li>
+        <strong>Optimize video files</strong> (lower resolution, efficient
+        codecs)
+      </li>
+      <li><strong>Close other camera applications</strong></li>
+      <li><strong>Use wired connection</strong> for video URLs</li>
+    </ol>
+
+    <h3>Memory Management</h3>
+    <ul>
+      <li>Application automatically cleans up object URLs</li>
+      <li>Manual cleanup available via browser refresh</li>
+      <li>Large datasets may require indexedDB instead of localStorage</li>
+    </ul>
+
+    <h2>Debug Mode</h2>
+    <p>Add to console for detailed logging:</p>
+    <div class="code-block">localStorage.setItem('debug', 'true');</div>
+
+    <h1 id="compatibility">🌐 Browser Compatibility</h1>
+
+    <h2>Supported Browsers</h2>
+    <ul>
+      <li><strong>Chrome 80+</strong> (Recommended)</li>
+      <li><strong>Firefox 75+</strong></li>
+      <li><strong>Safari 13+</strong></li>
+      <li><strong>Edge 80+</strong></li>
+    </ul>
+
+    <h2>Required Features</h2>
+    <ul>
+      <li><strong>WebRTC</strong> (getUserMedia)</li>
+      <li><strong>Canvas API</strong></li>
+      <li><strong>CSS Grid & Flexbox</strong></li>
+      <li><strong>ES6+ JavaScript</strong></li>
+      <li><strong>localStorage</strong></li>
+    </ul>
+
+    <h2>Mobile Support</h2>
+    <ul>
+      <li><strong>iOS 13+</strong> (Safari)</li>
+      <li><strong>Android 8+</strong> (Chrome)</li>
+      <li><strong>Responsive design</strong> adapts to touch interfaces</li>
+    </ul>
+
+    <div class="success">
+      <strong>Pro Tip:</strong> The application is fully responsive and works
+      seamlessly across desktop, tablet, and mobile devices.
+    </div>
+
+    <h2>Demo Notes</h2>
+
+    <h3>Current Limitations (Demo Version)</h3>
+    <ul>
+      <li><strong>Simulated face detection</strong> (random results)</li>
+      <li><strong>Mock face descriptors</strong> (not real ML models)</li>
+      <li><strong>No TensorFlow.js integration</strong> in demo</li>
+    </ul>
+
+    <h3>Production Ready Upgrades</h3>
+    <ol>
+      <li>
+        <strong>Integrate Face-api.js</strong> or <strong>TensorFlow.js</strong>
+      </li>
+      <li><strong>Add real face detection models</strong></li>
+      <li><strong>Implement proper face encoding</strong></li>
+      <li><strong>Add backend API</strong> for larger datasets</li>
+      <li><strong>Implement user authentication</strong></li>
+    </ol>
+
+    <div class="note">
+      <strong>Note:</strong> This is a frontend demonstration. For production
+      use, integrate with proper face recognition libraries and backend
+      services.
+    </div>
+
+    <div class="footer">
+      <p>AR Face Recognition Video Player Documentation</p>
+      <p>Version 1.0 | Complete User Guide & Technical Reference</p>
+      <p>
+        For support and questions, refer to the troubleshooting section above.
+      </p>
+    </div>
+
+    <div
+      class="no-print"
+      style="
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        background: #f1f5f9;
+        border-radius: 8px;
+      "
+    >
+      <h3>📥 Save as PDF</h3>
+      <p>To save this documentation as PDF:</p>
+      <ol style="display: inline-block; text-align: left; margin: 15px 0">
+        <li>
+          Press <strong>Ctrl+P</strong> (Windows) or
+          <strong>Cmd+P</strong> (Mac)
+        </li>
+        <li>Choose "Save as PDF" as destination</li>
+        <li>Click "Save"</li>
+      </ol>
+      <p><em>For best results, use Chrome or Firefox for PDF generation</em></p>
+    </div>
+  </body>
+</html>
