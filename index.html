@@ -8,6 +8,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <!-- Use WebGL backend for better compatibility -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <style>
       /* All your existing CSS styles remain the same */
       :root {
@@ -1358,18 +1360,6 @@
             <div class="file-upload-hint">Lower values = stricter matching</div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Scan Duration</label>
-            <select class="form-input" id="scanDuration">
-              <option value="5">5 seconds</option>
-              <option value="7" selected>7 seconds</option>
-              <option value="10">10 seconds</option>
-            </select>
-            <div class="file-upload-hint">
-              Time required for face confirmation
-            </div>
-          </div>
-
           <div class="btn-group">
             <button class="btn btn-primary" id="startBtn">
               <i class="fas fa-play"></i> Start Recognition
@@ -1690,13 +1680,8 @@
           },
           stabilizer: new VideoStabilizer(),
           recognizedFaces: new Set(),
-          // New variables for continuous detection
+          // New variables for immediate recognition
           currentUser: null,
-          userDetectionStart: null,
-          consecutiveDetections: 0,
-          requiredConsecutiveDetections: 7, // 7 detections at 1 second interval = 7 seconds
-          noFaceTimer: null,
-          noFaceTimeout: 10000, // 10 seconds timeout for no face
         };
 
         // Elements
@@ -1718,7 +1703,6 @@
           startBtn: document.getElementById("startBtn"),
           stopBtn: document.getElementById("stopBtn"),
           threshold: document.getElementById("threshold"),
-          scanDuration: document.getElementById("scanDuration"),
           recognitionStatus: document.getElementById("recognitionStatus"),
           facesCount: document.getElementById("facesCount"),
           bestMatch: document.getElementById("bestMatch"),
@@ -1778,13 +1762,17 @@
             "change",
             updateSelectedVideo
           );
-          elements.threshold.addEventListener("change", recreateFaceMatcher);
-          elements.scanDuration.addEventListener("change", updateScanDuration);
+          elements.threshold.addEventListener(
+            "change",
+            updateRecognitionSettings
+          );
         }
 
         function setupWelcomePopup() {
           elements.continueBtn.addEventListener("click", () => {
             hideWelcomePopup();
+            handleStopRecognition();
+
             // Continue with main video playback
             if (state.currentUser && videoMap[state.currentUser]) {
               const vid = videoMap[state.currentUser];
@@ -1795,7 +1783,7 @@
 
           elements.closeWelcomeBtn.addEventListener("click", () => {
             hideWelcomePopup();
-            resetUserDetection();
+            handleStopRecognition();
           });
         }
 
@@ -1878,17 +1866,6 @@
           });
         }
 
-        function updateScanDuration() {
-          state.requiredConsecutiveDetections = parseInt(
-            elements.scanDuration.value
-          );
-          showAlert(
-            `Scan duration set to ${state.requiredConsecutiveDetections} seconds`,
-            "info",
-            "Settings Updated"
-          );
-        }
-
         function showWelcomePopup(userName) {
           elements.welcomeUserName.textContent = userName;
 
@@ -1961,10 +1938,26 @@
             // Simulate processing delay
             await new Promise((resolve) => setTimeout(resolve, 1500));
 
-            // For demo purposes, we'll create a mock descriptor
-            const descriptors = [
-              new Float32Array(128).map(() => Math.random()),
-            ];
+            // For demo purposes, we'll create mock descriptors
+            const descriptors = [];
+            for (let i = 0; i < files.length; i++) {
+              // Create mock face descriptor (128-dimensional vector)
+              const mockDescriptor = new Float32Array(128);
+              for (let j = 0; j < 128; j++) {
+                mockDescriptor[j] = Math.random();
+              }
+              descriptors.push(mockDescriptor);
+
+              showAlert(
+                `Processed image ${i + 1}/${files.length}`,
+                "info",
+                "Processing"
+              );
+            }
+
+            if (descriptors.length === 0) {
+              throw new Error("No valid faces found in the uploaded images");
+            }
 
             // Update or add person
             const wasUpdate = labeledDescriptors.some(
@@ -1973,7 +1966,10 @@
             labeledDescriptors = labeledDescriptors.filter(
               (ld) => ld.label !== name
             );
-            labeledDescriptors.push({ label: name, descriptors: descriptors });
+            labeledDescriptors.push({
+              label: name,
+              descriptors: descriptors,
+            });
 
             // Handle video
             let videoAttached = false;
@@ -2001,10 +1997,10 @@
             refreshPeopleList();
 
             const successMessage = wasUpdate
-              ? `Updated ${name} with face descriptors${
+              ? `Updated ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
                 }`
-              : `Added ${name} with face descriptors${
+              : `Added ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
                 }`;
 
@@ -2031,6 +2027,10 @@
           }
         }
 
+        function delay(ms) {
+          return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
         async function handleStartRecognition() {
           if (state.running) return;
 
@@ -2039,8 +2039,9 @@
             '<i class="fas fa-spinner fa-spin"></i> Starting...';
 
           try {
-            await loadModels();
             await startCamera();
+
+            await delay(2000);
 
             if (labeledDescriptors.length === 0) {
               showAlert(
@@ -2056,7 +2057,8 @@
               );
             }
 
-            recreateFaceMatcher();
+            await delay(2000);
+
             state.running = true;
             elements.stopBtn.style.display = "inline-block";
             elements.startBtn.style.display = "none";
@@ -2064,7 +2066,6 @@
             // Reset recognition tracking
             state.recognizedFaces.clear();
             resetUserDetection();
-            resetNoFaceTimer();
 
             mainLoop();
           } catch (error) {
@@ -2088,7 +2089,6 @@
           hidePersonVideo();
           state.stabilizer.disable();
           hideScanningProgress();
-          clearNoFaceTimer();
 
           const stream = elements.videoElement.srcObject;
           if (stream) {
@@ -2104,30 +2104,7 @@
           showAlert("Face recognition stopped", "info", "Stopped");
         }
 
-        function resetNoFaceTimer() {
-          clearNoFaceTimer();
-          state.noFaceTimer = setTimeout(() => {
-            if (state.running && !state.currentUser) {
-              showAlert(
-                "User not found after 10 seconds of scanning",
-                "warning",
-                "User Not Found"
-              );
-              resetUserDetection();
-              hideScanningProgress();
-            }
-          }, state.noFaceTimeout);
-        }
-
-        function clearNoFaceTimer() {
-          if (state.noFaceTimer) {
-            clearTimeout(state.noFaceTimer);
-            state.noFaceTimer = null;
-          }
-        }
-
         async function mainLoop() {
-          debugger;
           if (!state.running) return;
 
           if (elements.videoElement.readyState < 2) {
@@ -2154,9 +2131,10 @@
               elements.overlay.height
             );
 
-            // Simulate face detection with random results for demo
-            const faceCount =
-              Math.random() > 0.2 ? Math.floor(Math.random() * 2) + 1 : 0;
+            // Use simulated face detection (no external dependencies)
+            const detections = simulateFaceDetection();
+
+            const faceCount = detections.length;
 
             if (faceCount === 0) {
               elements.recognitionStatus.textContent = "No faces";
@@ -2168,48 +2146,49 @@
               hidePersonVideo();
               hideScanningProgress();
             } else {
-              // Draw simulated face detections
+              // Draw face detections
               let recognizedPerson = null;
               let mainFacePosition = null;
               let mainFaceSize = null;
 
               for (let i = 0; i < faceCount; i++) {
-                const width = 100 + Math.random() * 100;
-                const height = 120 + Math.random() * 80;
-                const x = Math.random() * (elements.overlay.width - width);
-                const y = Math.random() * (elements.overlay.height - height);
+                const detection = detections[i];
+                const box = detection.box;
 
                 // Store position of the main face for stabilization
                 if (i === 0) {
-                  mainFacePosition = { x: x + width / 2, y: y + height / 2 };
-                  mainFaceSize = Math.max(width, height);
+                  mainFacePosition = {
+                    x: box.x + box.width / 2,
+                    y: box.y + box.height / 2,
+                  };
+                  mainFaceSize = Math.max(box.width, box.height);
                 }
 
+                // Draw face box
                 ctx.strokeStyle = "#00e0a7";
                 ctx.lineWidth = 3;
-                ctx.strokeRect(x, y, width, height);
+                ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-                // In a real implementation, we would recognize the face here
-                if (labeledDescriptors.length > 0 && Math.random() > 0.3) {
-                  const randomPerson =
-                    labeledDescriptors[
-                      Math.floor(Math.random() * labeledDescriptors.length)
-                    ];
+                // Draw recognition result
+                if (detection.label) {
                   ctx.fillStyle = "#00e0a7";
                   ctx.font = "16px Arial";
-                  ctx.fillText(randomPerson.label, x, y - 5);
+                  ctx.fillText(detection.label, box.x, box.y - 5);
 
                   // If this is the first face, set it as the best match
                   if (i === 0) {
-                    recognizedPerson = randomPerson;
-                    elements.bestMatch.textContent = randomPerson.label;
+                    recognizedPerson = { label: detection.label };
+                    elements.bestMatch.textContent = detection.label;
                   }
                 } else {
+                  ctx.fillStyle = "#ff6b6b";
+                  ctx.font = "16px Arial";
+                  ctx.fillText("Unknown", box.x, box.y - 5);
                   elements.bestMatch.textContent = "Unknown";
                 }
               }
 
-              elements.recognitionStatus.textContent = "Scanning...";
+              elements.recognitionStatus.textContent = "Recognizing...";
               elements.facesCount.textContent = faceCount.toString();
 
               // Update stabilizer with face position
@@ -2220,7 +2199,7 @@
                 );
               }
 
-              // Handle user detection and timing
+              // Handle user detection - IMMEDIATE recognition
               if (recognizedPerson) {
                 handleUserDetection(recognizedPerson);
               } else {
@@ -2246,69 +2225,67 @@
           }, state.detectionInterval);
         }
 
+        // Simulate face detection (no external dependencies)
+        function simulateFaceDetection() {
+          const faceCount =
+            Math.random() > 0.3 ? Math.floor(Math.random() * 2) + 1 : 0;
+          const detections = [];
+
+          for (let i = 0; i < faceCount; i++) {
+            const width = 100 + Math.random() * 100;
+            const height = 120 + Math.random() * 80;
+            const x = Math.random() * (elements.overlay.width - width);
+            const y = Math.random() * (elements.overlay.height - height);
+
+            const detection = {
+              box: { x, y, width, height },
+            };
+
+            // Randomly assign a known person based on threshold
+            if (
+              labeledDescriptors.length > 0 &&
+              Math.random() > parseFloat(elements.threshold.value) - 0.3
+            ) {
+              const randomPerson =
+                labeledDescriptors[
+                  Math.floor(Math.random() * labeledDescriptors.length)
+                ];
+              detection.label = randomPerson.label;
+            }
+
+            detections.push(detection);
+          }
+
+          return detections;
+        }
+
         function resetUserDetection() {
           state.currentUser = null;
-          state.userDetectionStart = null;
-          state.consecutiveDetections = 0;
         }
 
         function handleUserDetection(recognizedPerson) {
-          const now = Date.now();
-
-          // If this is a new user or different user, reset detection
+          // If this is a new user or different user, show welcome popup immediately
           if (state.currentUser !== recognizedPerson.label) {
-            resetUserDetection();
             state.currentUser = recognizedPerson.label;
-            state.userDetectionStart = now;
-            state.consecutiveDetections = 1;
 
-            // Show scanning progress
-            showScanningProgress(recognizedPerson.label);
+            // Show welcome popup immediately with video
+            showWelcomePopup(recognizedPerson.label);
+
+            // Increment matches counter
+            state.stats.matchesToday++;
+            updateStats();
+
             showAlert(
-              `Scanning ${recognizedPerson.label}... (1/${state.requiredConsecutiveDetections})`,
-              "info",
-              "Face Detection"
+              `Welcome ${recognizedPerson.label}!`,
+              "success",
+              "Face Recognized"
             );
-          } else {
-            // Same user - increment consecutive detections
-            state.consecutiveDetections++;
-
-            // Update scanning progress
-            updateScanningProgress();
-
-            // Check if we've reached the required consecutive detections
-            if (
-              state.consecutiveDetections >= state.requiredConsecutiveDetections
-            ) {
-              // User detected continuously for required time - show welcome popup with video!
-              showWelcomePopup(recognizedPerson.label);
-              clearNoFaceTimer();
-            }
           }
         }
 
         function showScanningProgress(personName) {
           elements.scanningPerson.textContent = `Scanning ${personName}...`;
           elements.scanningProgress.style.display = "block";
-          updateScanningProgress();
-        }
-
-        function updateScanningProgress() {
-          const progress = Math.min(
-            100,
-            (state.consecutiveDetections /
-              state.requiredConsecutiveDetections) *
-              100
-          );
-
-          // Update progress bar
-          elements.scanningProgressBar.style.width = `${progress}%`;
-          elements.scanningPercent.textContent = `${Math.round(progress)}%`;
-
-          // Update UI to show scanning progress
-          elements.recognitionStatus.textContent = `Scanning... ${Math.round(
-            progress
-          )}%`;
         }
 
         function hideScanningProgress() {
@@ -2323,6 +2300,10 @@
           elements.accuracy.textContent = `${
             Math.floor(Math.random() * 20) + 80
           }%`; // Simulated accuracy
+        }
+
+        function updateRecognitionSettings() {
+          showAlert("Recognition settings updated", "info", "Settings Updated");
         }
 
         // Helper functions
@@ -2437,47 +2418,6 @@
             );
             throw error;
           }
-        }
-
-        async function loadModels() {
-          if (state.modelsLoaded) return;
-
-          elements.modelLoading.style.display = "block";
-
-          // Simulate model loading for demo
-          const totalSteps = 5;
-          for (let i = 1; i <= totalSteps; i++) {
-            const progress = (i / totalSteps) * 100;
-            elements.modelProgressBar.style.width = `${progress}%`;
-            elements.modelProgressText.textContent = `${Math.round(progress)}%`;
-
-            const steps = [
-              "Loading TensorFlow.js",
-              "Loading Face Detection Model",
-              "Loading Face Landmark Model",
-              "Loading Face Recognition Model",
-              "Initializing Models",
-            ];
-
-            elements.modelStatus.textContent = steps[i - 1];
-
-            // Simulate loading time
-            await new Promise((resolve) => setTimeout(resolve, 600));
-          }
-
-          elements.modelLoading.style.display = "none";
-          state.modelsLoaded = true;
-
-          showAlert(
-            "All models loaded successfully",
-            "success",
-            "Models Ready"
-          );
-        }
-
-        function recreateFaceMatcher() {
-          // In a real implementation, we would recreate the face matcher with the new threshold
-          showAlert("Recognition settings updated", "info", "Settings Updated");
         }
 
         function loadSaved() {
