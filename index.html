@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>AR Face Recognition Video Player</title>
     <link
       rel="stylesheet"
@@ -982,6 +987,34 @@
         margin-top: 10px;
       }
 
+      /* Mobile Camera Instructions */
+      .mobile-instructions {
+        background: var(--warning);
+        color: #000;
+        padding: 15px;
+        border-radius: var(--radius);
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .mobile-instructions.show {
+        display: block;
+      }
+
+      .mobile-instructions h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .mobile-instructions ol {
+        margin-left: 20px;
+        text-align: left;
+      }
+
+      .mobile-instructions li {
+        margin-bottom: 5px;
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -1022,11 +1055,9 @@
         .main-content {
           grid-template-columns: 1fr;
         }
-
         .info-grid {
           grid-template-columns: 1fr;
         }
-
         .welcome-content {
           grid-template-columns: 1fr;
           max-width: 500px;
@@ -1037,44 +1068,35 @@
         body {
           padding: 15px;
         }
-
         .header {
           flex-direction: column;
           gap: 16px;
           align-items: flex-start;
         }
-
         .btn-group {
           flex-direction: column;
         }
-
         .video-overlay {
           width: 200px;
           height: 130px;
         }
-
         .theme-controls {
           width: 100%;
           justify-content: space-between;
         }
-
         .welcome-content {
           padding: 20px;
           margin: 20px;
         }
-
         .welcome-title {
           font-size: 24px;
         }
-
         .welcome-user {
           font-size: 20px;
         }
-
         .welcome-actions {
           flex-direction: column;
         }
-
         .welcome-video,
         .video-placeholder {
           height: 200px;
@@ -1085,20 +1107,16 @@
         .welcome-content {
           padding: 15px;
         }
-
         .welcome-title {
           font-size: 20px;
         }
-
         .welcome-user {
           font-size: 18px;
         }
-
         .welcome-video,
         .video-placeholder {
           height: 150px;
         }
-
         .welcome-icon {
           font-size: 60px;
         }
@@ -1107,12 +1125,9 @@
   </head>
   <body>
     <div class="app-container">
-      <!-- Header -->
       <header class="header">
         <div class="logo">
-          <div class="logo-icon">
-            <i class="fas fa-robot"></i>
-          </div>
+          <div class="logo-icon"><i class="fas fa-robot"></i></div>
           <div class="logo-text">
             <h1>AR Face Recognition</h1>
             <p>Real-time face detection with video playback</p>
@@ -1129,9 +1144,8 @@
           </div>
           <div class="theme-selector">
             <div class="theme-dropdown-btn" id="themeDropdownBtn">
-              <i class="fas fa-palette"></i>
-              <span>Theme</span>
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-palette"></i><span>Theme</span
+              ><i class="fas fa-chevron-down"></i>
             </div>
             <div class="theme-dropdown" id="themeDropdown">
               <div class="theme-option theme-default" data-theme="dark">
@@ -1155,10 +1169,19 @@
         </div>
       </header>
 
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Video Section -->
         <main class="video-section">
+          <!-- Mobile Instructions -->
+          <div class="mobile-instructions" id="mobileInstructions">
+            <h3>📱 Mobile Setup Required</h3>
+            <ol>
+              <li>Use <strong>Chrome or Firefox</strong> browser</li>
+              <li>Allow <strong>camera permission</strong> when prompted</li>
+              <li>Ensure good lighting for face detection</li>
+              <li>If camera fails, use Demo Mode below</li>
+            </ol>
+          </div>
+
           <div class="video-container">
             <video id="videoElement" autoplay muted playsinline></video>
             <canvas id="overlay"></canvas>
@@ -1170,7 +1193,6 @@
             </div>
           </div>
 
-          <!-- Scanning Progress -->
           <div class="scanning-progress" id="scanningProgress">
             <div class="progress-info">
               <span id="scanningPerson">Scanning...</span>
@@ -1221,9 +1243,7 @@
           </div>
         </main>
 
-        <!-- Controls Section -->
         <aside class="controls-section">
-          <!-- Model Loading -->
           <div class="model-loading" id="modelLoading">
             <div class="loading-header">
               <div class="form-label">Loading Models</div>
@@ -1235,12 +1255,10 @@
             <div class="loading-status" id="modelStatus">Initializing...</div>
           </div>
 
-          <!-- Add Person Form -->
           <div class="section-title">
             <i class="fas fa-user-plus"></i>
             <h2>Add Person</h2>
           </div>
-
           <div class="form-group">
             <label class="form-label">Person Name</label>
             <input
@@ -1250,7 +1268,6 @@
               placeholder="Enter person's name"
             />
           </div>
-
           <div class="form-group">
             <label class="form-label">Training Images</label>
             <div class="file-upload" id="personImagesUpload">
@@ -1269,7 +1286,6 @@
               No images selected
             </div>
           </div>
-
           <div class="form-group">
             <label class="form-label">Associated Video</label>
             <input
@@ -1297,17 +1313,14 @@
               No video selected
             </div>
           </div>
-
           <button class="btn btn-success btn-full" id="addPersonBtn">
             <i class="fas fa-plus-circle"></i> Add Person
           </button>
 
-          <!-- Known People -->
           <div class="section-title" style="margin-top: 30px">
             <i class="fas fa-users"></i>
             <h2>Known People</h2>
           </div>
-
           <div class="people-list" id="peopleList">
             <div class="empty-state">
               <i class="fas fa-user-friends"></i>
@@ -1318,21 +1331,19 @@
             </div>
           </div>
 
-          <!-- Video Stabilizer Controls -->
           <div class="section-title" style="margin-top: 30px">
             <i class="fas fa-film"></i>
             <h2>Video Stabilization</h2>
           </div>
-
           <div class="stabilizer-controls">
             <div class="stabilizer-option">
-              <label>Smoothness</label>
-              <input type="range" id="smoothness" min="1" max="10" value="5" />
+              <label>Smoothness</label
+              ><input type="range" id="smoothness" min="1" max="10" value="5" />
               <div class="stabilizer-value" id="smoothnessValue">5</div>
             </div>
             <div class="stabilizer-option">
-              <label>Stabilization Strength</label>
-              <input type="range" id="strength" min="1" max="100" value="70" />
+              <label>Stabilization Strength</label
+              ><input type="range" id="strength" min="1" max="100" value="70" />
               <div class="stabilizer-value" id="strengthValue">70%</div>
             </div>
             <div class="stabilizer-option">
@@ -1342,12 +1353,10 @@
             </div>
           </div>
 
-          <!-- Recognition Controls -->
           <div class="section-title" style="margin-top: 30px">
             <i class="fas fa-cogs"></i>
             <h2>Recognition Settings</h2>
           </div>
-
           <div class="form-group">
             <label class="form-label">Recognition Threshold</label>
             <select class="form-input" id="threshold">
@@ -1367,6 +1376,15 @@
               <i class="fas fa-stop"></i> Stop
             </button>
           </div>
+
+          <!-- Demo Mode Button -->
+          <button
+            class="btn btn-outline btn-full"
+            id="demoBtn"
+            style="margin-top: 15px"
+          >
+            <i class="fas fa-eye"></i> Try Demo Mode
+          </button>
         </aside>
       </div>
     </div>
@@ -1375,9 +1393,7 @@
     <div class="welcome-popup" id="welcomePopup">
       <div class="welcome-content">
         <div class="welcome-left">
-          <div class="welcome-icon">
-            <i class="fas fa-check-circle"></i>
-          </div>
+          <div class="welcome-icon"><i class="fas fa-check-circle"></i></div>
           <h2 class="welcome-title">Welcome Back!</h2>
           <p class="welcome-message">Face recognition successful</p>
           <div class="welcome-user" id="welcomeUserName">User Name</div>
@@ -1406,8 +1422,8 @@
               id="videoPlaceholder"
               style="display: none"
             >
-              <i class="fas fa-video"></i>
-              <span style="margin-left: 10px">No video available</span>
+              <i class="fas fa-video"></i
+              ><span style="margin-left: 10px">No video available</span>
             </div>
           </div>
           <div class="video-controls">
@@ -1438,11 +1454,8 @@
       const savedTheme = localStorage.getItem("theme") || "dark";
       setTheme(savedTheme);
 
-      // Set active theme button
       themeButtons.forEach((btn) => {
-        if (btn.dataset.theme === savedTheme) {
-          btn.classList.add("active");
-        }
+        if (btn.dataset.theme === savedTheme) btn.classList.add("active");
       });
 
       themeButtons.forEach((btn) => {
@@ -1450,39 +1463,29 @@
           const theme = btn.dataset.theme;
           setTheme(theme);
           localStorage.setItem("theme", theme);
-
-          // Update active button
           themeButtons.forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
         });
       });
 
-      // Toggle theme dropdown
       themeDropdownBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         themeDropdown.classList.toggle("show");
       });
 
-      // Close dropdown when clicking outside
-      document.addEventListener("click", () => {
-        themeDropdown.classList.remove("show");
-      });
+      document.addEventListener("click", () =>
+        themeDropdown.classList.remove("show")
+      );
 
-      // Handle theme selection from dropdown
       themeOptions.forEach((option) => {
         option.addEventListener("click", () => {
           const theme = option.getAttribute("data-theme");
           setTheme(theme);
           localStorage.setItem("theme", theme);
-
-          // Update active theme button
           themeButtons.forEach((btn) => {
             btn.classList.remove("active");
-            if (btn.dataset.theme === theme) {
-              btn.classList.add("active");
-            }
+            if (btn.dataset.theme === theme) btn.classList.add("active");
           });
-
           themeDropdown.classList.remove("show");
         });
       });
@@ -1513,20 +1516,15 @@
 
         disable() {
           this.enabled = false;
-          if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-          }
+          if (this.animationId) cancelAnimationFrame(this.animationId);
           this.resetPosition();
           showAlert("Video stabilizer disabled", "info", "Stabilizer Off");
         }
 
         startStabilization() {
           if (!this.enabled) return;
-
           const updateStabilization = () => {
             if (!this.enabled) return;
-
-            // Smoothly interpolate towards target position
             const smoothFactor = 0.3;
             this.currentPosition.x +=
               (this.targetPosition.x - this.currentPosition.x) * smoothFactor;
@@ -1535,46 +1533,29 @@
             this.currentPosition.scale +=
               (this.targetPosition.scale - this.currentPosition.scale) *
               smoothFactor;
-
-            // Apply stabilization to video overlay
             this.applyStabilization();
-
             this.animationId = requestAnimationFrame(updateStabilization);
           };
-
           this.animationId = requestAnimationFrame(updateStabilization);
         }
 
         updateTargetPosition(facePosition, faceSize) {
           if (!this.enabled) return;
-
-          // Calculate stabilization offsets based on face position
           const centerX = window.innerWidth / 2;
           const centerY = window.innerHeight / 2;
-
-          // Normalize face position to screen coordinates
           const normalizedX = (facePosition.x - centerX) / centerX;
           const normalizedY = (facePosition.y - centerY) / centerY;
-
-          // Apply stabilization with configurable strength
           const strengthFactor = this.strength / 100;
           this.targetPosition.x = -normalizedX * 20 * strengthFactor;
           this.targetPosition.y = -normalizedY * 15 * strengthFactor;
-
-          // Scale based on face size for depth effect
           const scaleFactor = Math.max(
             0.8,
             Math.min(1.2, 1 - (faceSize - 100) / 500)
           );
           this.targetPosition.scale = scaleFactor;
-
-          // Add to buffer for smoothing
           this.positionBuffer.push({ ...this.targetPosition });
-          if (this.positionBuffer.length > this.maxBufferSize) {
+          if (this.positionBuffer.length > this.maxBufferSize)
             this.positionBuffer.shift();
-          }
-
-          // Apply smoothing
           if (this.positionBuffer.length > 0) {
             const smoothX =
               this.positionBuffer.reduce((sum, pos) => sum + pos.x, 0) /
@@ -1585,7 +1566,6 @@
             const smoothScale =
               this.positionBuffer.reduce((sum, pos) => sum + pos.scale, 0) /
               this.positionBuffer.length;
-
             this.targetPosition.x = smoothX;
             this.targetPosition.y = smoothY;
             this.targetPosition.scale = smoothScale;
@@ -1597,15 +1577,9 @@
           const stabilizerIndicator = document.getElementById(
             "stabilizerIndicator"
           );
-
           if (videoOverlay && this.enabled) {
             videoOverlay.classList.add("stabilized");
-            videoOverlay.style.transform = `
-                        translate3d(${this.currentPosition.x}px, ${this.currentPosition.y}px, 0)
-                        scale(${this.currentPosition.scale})
-                    `;
-
-            // Show stabilizer indicator
+            videoOverlay.style.transform = `translate3d(${this.currentPosition.x}px, ${this.currentPosition.y}px, 0) scale(${this.currentPosition.scale})`;
             stabilizerIndicator.style.display = "block";
           } else if (videoOverlay) {
             videoOverlay.classList.remove("stabilized");
@@ -1633,28 +1607,19 @@
         const alertContainer = document.getElementById("alertContainer");
         const alert = document.createElement("div");
         alert.className = `alert alert-${type}`;
-
         const icons = {
           success: "fas fa-check-circle",
           error: "fas fa-exclamation-circle",
           warning: "fas fa-exclamation-triangle",
           info: "fas fa-info-circle",
         };
-
-        alert.innerHTML = `
-                <i class="alert-icon ${icons[type]}"></i>
-                <div class="alert-content">
-                    ${title ? `<div class="alert-title">${title}</div>` : ""}
-                    <div class="alert-message">${message}</div>
-                </div>
-            `;
-
+        alert.innerHTML = `<i class="alert-icon ${
+          icons[type]
+        }"></i><div class="alert-content">${
+          title ? `<div class="alert-title">${title}</div>` : ""
+        }<div class="alert-message">${message}</div></div>`;
         alertContainer.appendChild(alert);
-
-        // Animate in
         setTimeout(() => alert.classList.add("show"), 10);
-
-        // Auto remove
         setTimeout(() => {
           alert.classList.remove("show");
           setTimeout(() => alert.remove(), 300);
@@ -1663,24 +1628,19 @@
 
       // Application Code
       (function () {
-        // Application state
         const state = {
           running: false,
           faceMatcher: null,
-          detectionInterval: 1000, // Scan every 1 second
+          detectionInterval: 1000,
           modelsLoaded: false,
           cameraActive: false,
           currentVideoPlaying: null,
           singleFaceMode: "auto",
-          stats: {
-            totalFaces: 0,
-            matchesToday: 0,
-            recognitionTime: 0,
-          },
+          stats: { totalFaces: 0, matchesToday: 0, recognitionTime: 0 },
           stabilizer: new VideoStabilizer(),
           recognizedFaces: new Set(),
-          // New variables for immediate recognition
           currentUser: null,
+          demoMode: false,
         };
 
         // Elements
@@ -1701,6 +1661,7 @@
           addPersonBtn: document.getElementById("addPersonBtn"),
           startBtn: document.getElementById("startBtn"),
           stopBtn: document.getElementById("stopBtn"),
+          demoBtn: document.getElementById("demoBtn"),
           threshold: document.getElementById("threshold"),
           recognitionStatus: document.getElementById("recognitionStatus"),
           facesCount: document.getElementById("facesCount"),
@@ -1730,6 +1691,7 @@
           closeWelcomeBtn: document.getElementById("closeWelcomeBtn"),
           playPauseBtn: document.getElementById("playPauseBtn"),
           muteBtn: document.getElementById("muteBtn"),
+          mobileInstructions: document.getElementById("mobileInstructions"),
         };
 
         const ctx = elements.overlay.getContext("2d");
@@ -1748,9 +1710,16 @@
           refreshPeopleList();
           updateStats();
 
-          // Load face-api models
-          await loadFaceAPIModels();
+          // Show mobile instructions on mobile devices
+          if (
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+              navigator.userAgent
+            )
+          ) {
+            elements.mobileInstructions.classList.add("show");
+          }
 
+          await loadFaceAPIModels();
           showAlert("AR Face Recognition Studio ready", "info", "System Ready");
         }
 
@@ -1760,35 +1729,29 @@
             elements.modelLoading.style.display = "block";
             elements.modelStatus.textContent =
               "Loading face detection models...";
-
-            // Load models from the models directory
             await faceapi.nets.tinyFaceDetector.loadFromUri("models");
             elements.modelProgressBar.style.width = "30%";
             elements.modelProgressText.textContent = "30%";
             elements.modelStatus.textContent = "Loading face landmark model...";
-
             await faceapi.nets.faceLandmark68Net.loadFromUri("models");
             elements.modelProgressBar.style.width = "60%";
             elements.modelProgressText.textContent = "60%";
             elements.modelStatus.textContent =
               "Loading face recognition model...";
-
             await faceapi.nets.faceRecognitionNet.loadFromUri("models");
             elements.modelProgressBar.style.width = "100%";
             elements.modelProgressText.textContent = "100%";
             elements.modelStatus.textContent = "Models loaded successfully!";
-
             state.modelsLoaded = true;
             showAlert(
               "Face recognition models loaded successfully",
               "success",
               "Models Ready"
             );
-
-            // Hide loading indicator after a delay
-            setTimeout(() => {
-              elements.modelLoading.style.display = "none";
-            }, 2000);
+            setTimeout(
+              () => (elements.modelLoading.style.display = "none"),
+              2000
+            );
           } catch (error) {
             console.error("Error loading models:", error);
             elements.modelStatus.textContent =
@@ -1805,6 +1768,7 @@
           elements.addPersonBtn.addEventListener("click", handleAddPerson);
           elements.startBtn.addEventListener("click", handleStartRecognition);
           elements.stopBtn.addEventListener("click", handleStopRecognition);
+          elements.demoBtn.addEventListener("click", handleDemoMode);
           elements.personImages.addEventListener(
             "change",
             updateSelectedImages
@@ -1823,15 +1787,12 @@
           elements.continueBtn.addEventListener("click", () => {
             hideWelcomePopup();
             handleStopRecognition();
-
-            // Continue with main video playback
             if (state.currentUser && videoMap[state.currentUser]) {
               const vid = videoMap[state.currentUser];
               const src = vid.url || vid.objectUrl;
               setPersonVideo(src, state.currentUser);
             }
           });
-
           elements.closeWelcomeBtn.addEventListener("click", () => {
             hideWelcomePopup();
             handleStopRecognition();
@@ -1839,7 +1800,6 @@
         }
 
         function setupVideoControls() {
-          // Play/Pause button
           elements.playPauseBtn.addEventListener("click", () => {
             if (elements.welcomeVideo.paused) {
               elements.welcomeVideo.play();
@@ -1851,26 +1811,24 @@
                 '<i class="fas fa-play"></i> Play';
             }
           });
-
-          // Mute button
           elements.muteBtn.addEventListener("click", () => {
             elements.welcomeVideo.muted = !elements.welcomeVideo.muted;
             elements.muteBtn.innerHTML = elements.welcomeVideo.muted
               ? '<i class="fas fa-volume-mute"></i> Unmute'
               : '<i class="fas fa-volume-up"></i> Mute';
           });
-
-          // Video events
-          elements.welcomeVideo.addEventListener("play", () => {
-            elements.playPauseBtn.innerHTML =
-              '<i class="fas fa-pause"></i> Pause';
-          });
-
-          elements.welcomeVideo.addEventListener("pause", () => {
-            elements.playPauseBtn.innerHTML =
-              '<i class="fas fa-play"></i> Play';
-          });
-
+          elements.welcomeVideo.addEventListener(
+            "play",
+            () =>
+              (elements.playPauseBtn.innerHTML =
+                '<i class="fas fa-pause"></i> Pause')
+          );
+          elements.welcomeVideo.addEventListener(
+            "pause",
+            () =>
+              (elements.playPauseBtn.innerHTML =
+                '<i class="fas fa-play"></i> Play')
+          );
           elements.welcomeVideo.addEventListener("ended", () => {
             elements.playPauseBtn.innerHTML =
               '<i class="fas fa-play"></i> Play';
@@ -1879,7 +1837,6 @@
         }
 
         function setupStabilizerControls() {
-          // Smoothness control
           elements.smoothness.addEventListener("input", (e) => {
             const value = e.target.value;
             elements.smoothnessValue.textContent = value;
@@ -1888,8 +1845,6 @@
               parseInt(elements.strength.value)
             );
           });
-
-          // Strength control
           elements.strength.addEventListener("input", (e) => {
             const value = e.target.value;
             elements.strengthValue.textContent = value + "%";
@@ -1898,8 +1853,6 @@
               parseInt(value)
             );
           });
-
-          // Toggle stabilizer
           elements.toggleStabilizer.addEventListener("click", () => {
             if (state.stabilizer.enabled) {
               state.stabilizer.disable();
@@ -1919,35 +1872,27 @@
 
         function showWelcomePopup(userName) {
           elements.welcomeUserName.textContent = userName;
-
-          // Set up welcome video
           const vid = videoMap[userName];
           if (vid) {
             const src = vid.url || vid.objectUrl;
             elements.welcomeVideo.src = src;
             elements.welcomeVideo.style.display = "block";
             elements.videoPlaceholder.style.display = "none";
-
-            // Auto-play the welcome video
-            elements.welcomeVideo.play().catch((e) => {
-              console.log("Autoplay prevented, user interaction required");
-            });
+            elements.welcomeVideo
+              .play()
+              .catch((e) => console.log("Autoplay prevented"));
           } else {
             elements.welcomeVideo.style.display = "none";
             elements.videoPlaceholder.style.display = "flex";
           }
-
           elements.welcomePopup.classList.add("show");
-          // Stop scanning when welcome popup is shown
           state.running = false;
         }
 
         function hideWelcomePopup() {
-          // Stop welcome video
           elements.welcomeVideo.pause();
           elements.welcomeVideo.currentTime = 0;
           elements.welcomePopup.classList.remove("show");
-          // Resume scanning
           if (!state.running) {
             state.running = true;
             mainLoop();
@@ -1964,7 +1909,6 @@
             );
             return;
           }
-
           const files = Array.from(elements.personImages.files);
           if (files.length === 0) {
             showAlert(
@@ -1974,30 +1918,23 @@
             );
             return;
           }
-
           elements.addPersonBtn.disabled = true;
           elements.addPersonBtn.innerHTML =
             '<i class="fas fa-spinner fa-spin"></i> Processing...';
-
           try {
             showAlert(
               `Processing ${files.length} images for ${name}`,
               "info",
               "Processing"
             );
-
-            // Process images with face-api
             const descriptors = [];
             for (let i = 0; i < files.length; i++) {
               const file = files[i];
               const img = await faceapi.bufferToImage(file);
-
-              // Detect face and compute descriptor
               const detection = await faceapi
                 .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
                 .withFaceDescriptor();
-
               if (detection) {
                 descriptors.push(detection.descriptor);
                 showAlert(
@@ -2013,27 +1950,16 @@
                 );
               }
             }
-
-            if (descriptors.length === 0) {
+            if (descriptors.length === 0)
               throw new Error("No valid faces found in the uploaded images");
-            }
-
-            // Update or add person
             const wasUpdate = labeledDescriptors.some(
               (ld) => ld.label === name
             );
             labeledDescriptors = labeledDescriptors.filter(
               (ld) => ld.label !== name
             );
-            labeledDescriptors.push({
-              label: name,
-              descriptors: descriptors,
-            });
-
-            // Update face matcher
+            labeledDescriptors.push({ label: name, descriptors: descriptors });
             updateFaceMatcher();
-
-            // Handle video
             let videoAttached = false;
             if (elements.personVideoFile.files.length > 0) {
               const file = elements.personVideoFile.files[0];
@@ -2054,10 +1980,8 @@
                 "Video Added"
               );
             }
-
             persistSaved();
             refreshPeopleList();
-
             const successMessage = wasUpdate
               ? `Updated ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
@@ -2065,10 +1989,7 @@
               : `Added ${name} with ${descriptors.length} face descriptors${
                   videoAttached ? " and video" : ""
                 }`;
-
             showAlert(successMessage, "success", "Success");
-
-            // Reset form
             elements.personName.value = "";
             elements.personImages.value = "";
             elements.personVideoUrl.value = "";
@@ -2089,17 +2010,14 @@
           }
         }
 
-        // Update face matcher with current labeled descriptors
         function updateFaceMatcher() {
           if (labeledDescriptors.length === 0) {
             faceMatcher = null;
             return;
           }
-
           const labeledFaceDescriptors = labeledDescriptors.map(
             (ld) => new faceapi.LabeledFaceDescriptors(ld.label, ld.descriptors)
           );
-
           faceMatcher = new faceapi.FaceMatcher(
             labeledFaceDescriptors,
             parseFloat(elements.threshold.value)
@@ -2112,16 +2030,12 @@
 
         async function handleStartRecognition() {
           if (state.running) return;
-
           elements.startBtn.disabled = true;
           elements.startBtn.innerHTML =
             '<i class="fas fa-spinner fa-spin"></i> Starting...';
-
           try {
             await startCamera();
-
             await delay(2000);
-
             if (labeledDescriptors.length === 0) {
               showAlert(
                 "No people added yet. Recognition will work but no videos will play.",
@@ -2135,17 +2049,13 @@
                 "Recognition Active"
               );
             }
-
             await delay(2000);
-
             state.running = true;
+            state.demoMode = false;
             elements.stopBtn.style.display = "inline-block";
             elements.startBtn.style.display = "none";
-
-            // Reset recognition tracking
             state.recognizedFaces.clear();
             resetUserDetection();
-
             mainLoop();
           } catch (error) {
             console.error("Error starting recognition:", error);
@@ -2161,36 +2071,54 @@
           }
         }
 
+        function handleDemoMode() {
+          if (state.running) return;
+          showAlert(
+            "Demo mode activated - Using sample video feed",
+            "info",
+            "Demo Mode"
+          );
+          state.running = true;
+          state.demoMode = true;
+          elements.stopBtn.style.display = "inline-block";
+          elements.startBtn.style.display = "none";
+
+          // Use a sample video for demo
+          elements.videoElement.src =
+            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
+          elements.videoElement.play();
+
+          state.recognizedFaces.clear();
+          resetUserDetection();
+          mainLoop();
+        }
+
         function handleStopRecognition() {
           state.running = false;
+          state.demoMode = false;
           elements.stopBtn.style.display = "none";
           elements.startBtn.style.display = "inline-block";
           hidePersonVideo();
           state.stabilizer.disable();
           hideScanningProgress();
-
           const stream = elements.videoElement.srcObject;
           if (stream) {
             stream.getTracks().forEach((track) => track.stop());
             elements.videoElement.srcObject = null;
           }
-
           ctx.clearRect(0, 0, elements.overlay.width, elements.overlay.height);
           elements.recognitionStatus.textContent = "Stopped";
           elements.facesCount.textContent = "0";
           elements.bestMatch.textContent = "None";
-
           showAlert("Face recognition stopped", "info", "Stopped");
         }
 
         async function mainLoop() {
           if (!state.running) return;
-
           if (elements.videoElement.readyState < 2) {
             requestAnimationFrame(mainLoop);
             return;
           }
-
           if (
             elements.overlay.width !== elements.videoElement.videoWidth ||
             elements.overlay.height !== elements.videoElement.videoHeight
@@ -2198,11 +2126,8 @@
             elements.overlay.width = elements.videoElement.videoWidth;
             elements.overlay.height = elements.videoElement.videoHeight;
           }
-
           recognitionStartTime = performance.now();
-
           try {
-            // Clear canvas
             ctx.clearRect(
               0,
               0,
@@ -2210,43 +2135,42 @@
               elements.overlay.height
             );
 
-            // Use face-api for face detection
-            const detections = await faceapi
-              .detectAllFaces(
-                elements.videoElement,
-                new faceapi.TinyFaceDetectorOptions()
-              )
-              .withFaceLandmarks()
-              .withFaceDescriptors();
+            let detections = [];
+            if (state.demoMode) {
+              // Simulate face detection in demo mode
+              detections = simulateFaceDetection();
+            } else {
+              // Real face detection
+              detections = await faceapi
+                .detectAllFaces(
+                  elements.videoElement,
+                  new faceapi.TinyFaceDetectorOptions()
+                )
+                .withFaceLandmarks()
+                .withFaceDescriptors();
+            }
 
             const faceCount = detections.length;
-
             if (faceCount === 0) {
               elements.recognitionStatus.textContent = "No faces";
               elements.facesCount.textContent = "0";
               elements.bestMatch.textContent = "None";
-
-              // Reset detection if no faces
               resetUserDetection();
               hidePersonVideo();
               hideScanningProgress();
             } else {
-              // Draw face detections
               let recognizedPerson = null;
               let mainFacePosition = null;
               let mainFaceSize = null;
-
-              // Match faces if we have a face matcher
               const results = faceMatcher
                 ? detections.map((d) => faceMatcher.findBestMatch(d.descriptor))
                 : [];
-
               for (let i = 0; i < faceCount; i++) {
                 const detection = detections[i];
-                const box = detection.detection.box;
+                const box = state.demoMode
+                  ? detection.box
+                  : detection.detection.box;
                 const result = results[i];
-
-                // Store position of the main face for stabilization
                 if (i === 0) {
                   mainFacePosition = {
                     x: box.x + box.width / 2,
@@ -2254,24 +2178,22 @@
                   };
                   mainFaceSize = Math.max(box.width, box.height);
                 }
-
-                // Draw face box
                 ctx.strokeStyle =
                   result && result.label !== "unknown" ? "#00e0a7" : "#ff6b6b";
                 ctx.lineWidth = 3;
                 ctx.strokeRect(box.x, box.y, box.width, box.height);
-
-                // Draw recognition result
                 if (result && result.label !== "unknown") {
                   ctx.fillStyle = "#00e0a7";
                   ctx.font = "16px Arial";
                   ctx.fillText(
-                    `${result.label} (${(result.distance * 100).toFixed(1)}%)`,
+                    `${result.label} (${
+                      state.demoMode
+                        ? "85%"
+                        : (result.distance * 100).toFixed(1)
+                    }%)`,
                     box.x,
                     box.y - 5
                   );
-
-                  // If this is the first face, set it as the best match
                   if (i === 0) {
                     recognizedPerson = { label: result.label };
                     elements.bestMatch.textContent = result.label;
@@ -2283,29 +2205,21 @@
                   elements.bestMatch.textContent = "Unknown";
                 }
               }
-
               elements.recognitionStatus.textContent = "Recognizing...";
               elements.facesCount.textContent = faceCount.toString();
-
-              // Update stabilizer with face position
               if (mainFacePosition && state.stabilizer.enabled) {
                 state.stabilizer.updateTargetPosition(
                   mainFacePosition,
                   mainFaceSize
                 );
               }
-
-              // Handle user detection - IMMEDIATE recognition
               if (recognizedPerson) {
                 handleUserDetection(recognizedPerson);
               } else {
-                // Reset if unknown face
                 resetUserDetection();
                 hidePersonVideo();
                 hideScanningProgress();
               }
-
-              // Update stats
               state.stats.totalFaces += faceCount;
               state.stats.recognitionTime = Math.floor(
                 performance.now() - recognitionStartTime
@@ -2315,10 +2229,31 @@
           } catch (error) {
             console.error("Recognition error:", error);
           }
-
           setTimeout(() => {
             if (state.running) requestAnimationFrame(mainLoop);
           }, state.detectionInterval);
+        }
+
+        function simulateFaceDetection() {
+          const faceCount =
+            Math.random() > 0.3 ? Math.floor(Math.random() * 3) + 1 : 0;
+          const detections = [];
+          for (let i = 0; i < faceCount; i++) {
+            const width = 100 + Math.random() * 100;
+            const height = 120 + Math.random() * 80;
+            const x = Math.random() * (elements.overlay.width - width);
+            const y = Math.random() * (elements.overlay.height - height);
+            const detection = { box: { x, y, width, height } };
+            if (labeledDescriptors.length > 0 && Math.random() > 0.3) {
+              const randomPerson =
+                labeledDescriptors[
+                  Math.floor(Math.random() * labeledDescriptors.length)
+                ];
+              detection.label = randomPerson.label;
+            }
+            detections.push(detection);
+          }
+          return detections;
         }
 
         function resetUserDetection() {
@@ -2326,17 +2261,11 @@
         }
 
         function handleUserDetection(recognizedPerson) {
-          // If this is a new user or different user, show welcome popup immediately
           if (state.currentUser !== recognizedPerson.label) {
             state.currentUser = recognizedPerson.label;
-
-            // Show welcome popup immediately with video
             showWelcomePopup(recognizedPerson.label);
-
-            // Increment matches counter
             state.stats.matchesToday++;
             updateStats();
-
             showAlert(
               `Welcome ${recognizedPerson.label}!`,
               "success",
@@ -2361,16 +2290,14 @@
           elements.recognitionTime.textContent = `${state.stats.recognitionTime}ms`;
           elements.accuracy.textContent = `${
             Math.floor(Math.random() * 20) + 80
-          }%`; // Simulated accuracy
+          }%`;
         }
 
         function updateRecognitionSettings() {
-          // Update face matcher with new threshold
           updateFaceMatcher();
           showAlert("Recognition settings updated", "info", "Settings Updated");
         }
 
-        // Helper functions
         function updateSelectedImages() {
           const files = elements.personImages.files;
           const count = files.length;
@@ -2378,10 +2305,8 @@
             count > 0
               ? `${count} image${count > 1 ? "s" : ""} selected`
               : "No images selected";
-
-          if (count > 0) {
+          if (count > 0)
             elements.personImagesUpload.style.borderColor = "var(--success)";
-          }
         }
 
         function updateSelectedVideo() {
@@ -2396,17 +2321,12 @@
         }
 
         function setPersonVideo(src, personName) {
-          // Stop current video if playing
           if (state.currentVideoPlaying) {
             elements.personVideo.pause();
             elements.personVideo.currentTime = 0;
           }
-
-          // Set new video source
           elements.personVideo.src = src;
           elements.personVideo.load();
-
-          // Set up event listeners for the new video
           elements.personVideo.onloadeddata = () => {
             elements.personVideo.play().catch((e) => {
               console.error("Video play failed:", e);
@@ -2417,7 +2337,6 @@
               );
             });
           };
-
           elements.personVideo.onerror = () => {
             showAlert(
               "Error loading video. Please check the video source.",
@@ -2425,15 +2344,12 @@
               "Video Error"
             );
           };
-
           elements.personVideo.onended = () => {
-            // Loop the video
             if (state.currentVideoPlaying === personName) {
               elements.personVideo.currentTime = 0;
               elements.personVideo.play();
             }
           };
-
           state.currentVideoPlaying = personName;
           showPersonVideo();
         }
@@ -2450,36 +2366,45 @@
 
         async function startCamera() {
           try {
+            if (
+              !navigator.mediaDevices ||
+              !navigator.mediaDevices.getUserMedia
+            ) {
+              throw new Error("Camera API not supported in this browser");
+            }
             const stream = await navigator.mediaDevices.getUserMedia({
-              video: { facingMode: "user" },
+              video: {
+                facingMode: "user",
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              },
               audio: false,
             });
             elements.videoElement.srcObject = stream;
-
-            // Wait for video to be ready
             await new Promise((resolve) => {
-              elements.videoElement.onloadedmetadata = () => {
-                resolve();
-              };
+              elements.videoElement.onloadedmetadata = () => resolve();
             });
-
             await elements.videoElement.play();
-
             elements.overlay.width = elements.videoElement.videoWidth;
             elements.overlay.height = elements.videoElement.videoHeight;
             state.cameraActive = true;
-
             showAlert(
               "Camera activated successfully",
               "success",
               "Camera Ready"
             );
           } catch (error) {
-            showAlert(
-              "Camera access denied or unavailable: " + error.message,
-              "error",
-              "Camera Error"
-            );
+            console.error("Camera error:", error);
+            let errorMessage = "Camera access denied or unavailable";
+            if (error.name === "NotSupportedError")
+              errorMessage =
+                "Camera not supported in this browser. Try Chrome or Firefox.";
+            else if (error.name === "NotFoundError")
+              errorMessage = "No camera found on this device.";
+            else if (error.name === "NotAllowedError")
+              errorMessage =
+                "Camera permission denied. Please allow camera access in your browser settings.";
+            showAlert(errorMessage, "error", "Camera Error");
             throw error;
           }
         }
@@ -2491,7 +2416,6 @@
             const parsed = JSON.parse(saved);
             labeledDescriptors = parsed.labeledDescriptors || [];
             videoMap = parsed.videoMap || {};
-
             if (labeledDescriptors.length > 0) {
               showAlert(
                 `Loaded ${labeledDescriptors.length} saved people from previous session`,
@@ -2505,50 +2429,27 @@
         }
 
         function persistSaved() {
-          const serial = {
-            labeledDescriptors,
-            videoMap,
-          };
+          const serial = { labeledDescriptors, videoMap };
           localStorage.setItem("face_recognition_db", JSON.stringify(serial));
         }
 
         function refreshPeopleList() {
           const peopleList = elements.peopleList;
           peopleList.innerHTML = "";
-
           if (labeledDescriptors.length === 0) {
-            peopleList.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-user-friends"></i>
-                            <div class="empty-state-text">No people added yet</div>
-                            <div class="file-upload-hint">Add people to enable recognition</div>
-                        </div>
-                    `;
+            peopleList.innerHTML = `<div class="empty-state"><i class="fas fa-user-friends"></i><div class="empty-state-text">No people added yet</div><div class="file-upload-hint">Add people to enable recognition</div></div>`;
             return;
           }
-
           labeledDescriptors.forEach((person) => {
             const card = document.createElement("div");
             card.className = "person-card";
-            card.innerHTML = `
-                        <div class="person-header">
-                            <div class="person-name">${person.label}</div>
-                            <div class="person-samples">${
-                              person.descriptors.length
-                            } descriptor${
+            card.innerHTML = `<div class="person-header"><div class="person-name">${
+              person.label
+            }</div><div class="person-samples">${
+              person.descriptors.length
+            } descriptor${
               person.descriptors.length > 1 ? "s" : ""
-            }</div>
-                        </div>
-                        <div class="person-actions">
-                            <button class="btn btn-outline btn-sm play-btn">
-                                <i class="fas fa-play"></i> Play
-                            </button>
-                            <button class="btn btn-outline btn-sm remove-btn">
-                                <i class="fas fa-trash"></i> Remove
-                            </button>
-                        </div>
-                    `;
-
+            }</div></div><div class="person-actions"><button class="btn btn-outline btn-sm play-btn"><i class="fas fa-play"></i> Play</button><button class="btn btn-outline btn-sm remove-btn"><i class="fas fa-trash"></i> Remove</button></div>`;
             card.querySelector(".play-btn").addEventListener("click", () => {
               const vid = videoMap[person.label];
               if (vid) {
@@ -2562,7 +2463,6 @@
                 );
               }
             });
-
             card.querySelector(".remove-btn").addEventListener("click", () => {
               if (confirm(`Remove ${person.label}?`)) {
                 labeledDescriptors = labeledDescriptors.filter(
@@ -2575,21 +2475,16 @@
                 showAlert(`Removed ${person.label}`, "info", "Person Removed");
               }
             });
-
             peopleList.appendChild(card);
           });
         }
 
-        // Cleanup
         window.addEventListener("beforeunload", () => {
           Object.values(videoMap).forEach((v) => {
-            if (v && v.objectUrl) {
-              URL.revokeObjectURL(v.objectUrl);
-            }
+            if (v && v.objectUrl) URL.revokeObjectURL(v.objectUrl);
           });
         });
 
-        // Initialize
         init();
       })();
     </script>
